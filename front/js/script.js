@@ -46,16 +46,3 @@ function affP(value) {
     console.log(doc);
     doc.innerHTML = content;
 }
-
-const test = document.getElementsByName('href');    // On récupère l'élément sur lequel on veut détecter le clic
-elt.addEventListener('click', function() {          // On écoute l'événement click
-    alert('coucou')              // On change le contenu de notre élément pour afficher "C'est cliqué !"
-});
-
-function affProduct(id) {
-
-}
-
-function element(a, img, h3, p){
-    
-}

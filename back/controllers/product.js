@@ -21,7 +21,7 @@ exports.getOneProduct = (req, res, next) => {
   Product.findById(req.params.id).then(
     (product) => {
       if (!product) {
-        console.log('404test')
+        console.log('404')
         return res.status(404).send(new Error('Product not found!'));
       }
       product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
