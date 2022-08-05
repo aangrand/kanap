@@ -1,46 +1,90 @@
-let params = new URLSearchParams(window.location.search);
-const productId = params.get("id");
-const urlProduct = `http://localhost:3000/api/products/${productId}`;
-console.log(urlProduct);
-
-function fetchProd(input) {
-    fetch(input)
-        .then(function (res) {
-            if (res.ok) {
-                return res.json();
-            }
-        })
-        .then(function (value) {
-            //console.log(value);
-            affP(value);
-        })
-        .catch(function (err) {
-            console.log(err)
-        });
-}
-
-fetchProd(urlProduct)
-
-function affP(value) {
-    console.log(value)
-    document.querySelector(".item__img").innerHTML += `<img src="${value.imageUrl}"" alt="${value.altTxt}">`;
-    document.querySelector("#title").innerHTML += `${value.name}`;
-    document.querySelector("#price").innerHTML += `${value.price}`;
-    document.querySelector("#description").innerHTML += `${value.description}`;
-    for (i = 0; i < value.colors.length; i += 1) {
-        document.querySelector("#colors").innerHTML += `<option value="${value.colors[i]}">${value.colors[i]}</option>`
-    }
-
-    document.querySelector("#addToCart").addEventListener('click', (e) => {
-        e.preventDefault();
-        let productOptions = {
-            id: `${value._id}`,
-            nom: `${value.name}`,
-            couleur: document.querySelector("#colors").value,
-            quantite: parseInt(document.querySelector("#quantity").value),
-            prix: `${value.price}`,
-            image: `${value.imageUrl}`,
-            alt: `${value.altTxt}`
-        }
+const getProductId = () => {
+    return new URL(location.href).searchParams.get("id");
+  };
+  const productId = getProductId();
+  
+  fetch(`http://localhost:3000/api/products/${productId}`)
+    .then((response) => {
+      return response.json();
     })
-}
+  
+    .then((product) => {
+      selectedProduct(product);
+      registredProduct(product);
+    })
+    .catch((error) => {
+      alert(error);
+    });
+  
+  const selectedColor = document.querySelector("#colors");
+  
+  const selectedQuantity = document.querySelector("#quantity");
+  
+  const button = document.querySelector("#addToCart");
+  
+  let selectedProduct = (product) => {
+    document.querySelector("head > title").textContent = product.name;
+    document.querySelector(".item__img")
+    .innerHTML += `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
+    document.querySelector("#title").textContent += product.name;
+    document.querySelector("#price").textContent += product.price;
+    document.querySelector("#description").textContent += product.description;
+  
+    for (color of product.colors) {
+      let option = document.createElement("option");
+      option.innerHTML = `${color}`;
+      option.value = `${color}`;
+      selectedColor.appendChild(option);
+    }
+  };
+  
+  let registredProduct = (product) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+  
+      if (selectedColor.value == false) {
+        confirm("Veuillez sélectionner une couleur");
+      } else if (selectedQuantity.value == 0) {
+        confirm("Veuillez sélectionner le nombre d'articles souhaités");
+      } else {
+        alert("Votre article a bien été ajouté au panier");
+  
+        let selectedProduct = {
+          id: product._id,
+          name: product.name,
+          img: product.imageUrl,
+          altTxt: product.altTxt,
+          description: product.description,
+          color: selectedColor.value,
+          quantity: parseInt(selectedQuantity.value, 10),
+        };
+        console.log(selectedProduct);
+  
+        let existingCart = JSON.parse(localStorage.getItem("cart"));
+  
+        if (existingCart) {
+          console.log("Il y a déjà un produit dans le panier, on compare les données");
+          let item = existingCart.find(
+            (item) =>
+              item.id == selectedProduct.id && item.color == selectedProduct.color
+          );
+          if (item) {
+            item.quantity = item.quantity + selectedProduct.quantity;
+            item.totalPrice += item.price * selectedProduct.quantity;
+            localStorage.setItem("cart", JSON.stringify(existingCart));
+            console.log("Quantité supplémentaire dans le panier.");
+            return;
+          }
+          existingCart.push(selectedProduct);
+          localStorage.setItem("cart", JSON.stringify(existingCart));
+          console.log("Le produit a été ajouté au panier");
+  
+        } else {
+          let createLocalStorage = [];
+          createLocalStorage.push(selectedProduct);
+          localStorage.setItem("cart", JSON.stringify(createLocalStorage));
+          console.log("Le panier est vide, on ajoute le premier produit");
+        }
+      }
+    });
+  };
