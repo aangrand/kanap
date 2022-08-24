@@ -1,5 +1,7 @@
 const url = 'http://localhost:3000/api/products';
 
+//Recuperation de tout les canapés
+
 function fetchProd(input) {
     fetch(input)
         .then(function (res) {
@@ -17,6 +19,8 @@ function fetchProd(input) {
 }
 
 fetchProd(url)
+
+//affichage des canapés
 
 function affP(value) {
     console.log(value)
@@ -41,7 +45,7 @@ function affP(value) {
         `
         console.log(content);
     }
-    //document.createElement()
+
     let doc = document.getElementById('items')
     console.log(doc);
     doc.innerHTML = content;

@@ -11,7 +11,7 @@ const btnRetourHtml = `<button id="retourAccueil"><a href="./index.html">Retour 
 
 idConfirmation.innerHTML = `
     <br>
-    <strong>${orderId}</strong>. <br>
+    <b>${orderId}</b>. <br>
     <br>
     `;
 

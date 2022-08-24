@@ -1,9 +1,13 @@
 //PANIER
 
+// recuperation du local storage
+
 let cart = JSON.parse(localStorage.getItem("cart"));
 
 let products = [];
 let orderId = "";
+
+// fonction d'affichage du panier
 
 async function displayCart() {
     const parser = new DOMParser();
@@ -18,6 +22,7 @@ async function displayCart() {
 
     for (i = 0; i < cart.length; i++) {
         const product = await getProductById(cart[i].id);
+        const productPrice = product.price
         const totalPriceItem = (product.price *= cart[i].quantity);
         cartArray += `<article class="cart__item" data-id="${cart[i].id}" data-color="${cart[i].color}">
                   <div class="cart__item__img">
@@ -27,7 +32,7 @@ async function displayCart() {
                       <div class="cart__item__content__description">
                           <h2>${product.name}</h2>
                           <p>${cart[i].color}</p>
-                          <p>Prix unitaire: ${product.price}€</p>
+                          <p>Prix unitaire: ${productPrice}€</p>
                       </div>
                       <div class="cart__item__content__settings">
                         <div class="cart__item__content__settings__quantity">
@@ -137,9 +142,11 @@ btnValidate.addEventListener("click", (event) => {
 
     console.log(contact);
 
-    //REGEX
+    //REGEX verifications
+    
     const regExPrenomNomVille = (value) => {
-        return /^[A-Z][A-Za-z\é\è\ê\-]+$/.test(value);
+        //Add [A-Z] for 1st capital letter
+        return /^[A-Za-z\é\è\ê\-]+$/.test(value);
     };
 
     const regExAdresse = (value) => {
@@ -247,7 +254,7 @@ btnValidate.addEventListener("click", (event) => {
         localStorage.setItem("contact", JSON.stringify(contact));
 
         document.querySelector("#order").value =
-            "Articles et formulaire valide\n Passer commande !";
+            "Passer commande !";
         sendToServer();
     } else {
         error("Veuillez bien remplir le formulaire");
